@@ -1,0 +1,47 @@
+import os
+import torch
+import numpy as np
+import logging as log
+
+
+class CheckpointSt(object):
+    def __init__(self, start_epoch=None, train_loss=None, best_loss=np.inf, state_dict=None, optimizer=None):
+        self.start_epoch = start_epoch
+        self.train_loss = train_loss
+        self.best_loss = best_loss
+        self.state_dict = state_dict
+        self.optimizer = optimizer
+
+    def save(self, is_best, filename):
+        if is_best:
+            log.info('Saving the best model at "%s"' % filename)
+        else:
+            log.info('Saving checkpoint at "%s"' % filename)
+        state_dict = {
+            'start_epoch': self.start_epoch,
+            'train_loss': self.train_loss,
+            'best_loss': self.best_loss,
+            'state_dict': self.state_dict,
+            'optimizer': self.optimizer
+        }
+        torch.save(state_dict, filename)
+
+    def load(self, filename):
+        if os.path.isfile(filename):
+            log.info('Resuming checkpoint from "%s"' % filename)
+            checkpoint = torch.load(filename, map_location='cpu')
+            if isinstance(checkpoint, dict):
+                self.start_epoch = checkpoint['start_epoch']
+                self.train_loss = checkpoint['train_loss']
+                self.best_loss = checkpoint['best_loss']
+                self.state_dict = checkpoint['state_dict']
+                self.optimizer = checkpoint['optimizer']
+            else:
+                self.start_epoch = checkpoint.start_epoch
+                self.train_loss = checkpoint.train_loss
+                self.best_loss = checkpoint.best_loss
+                self.state_dict = checkpoint.state_dict
+                self.optimizer = checkpoint.optimizer
+
+        else:
+            raise ValueError('No checkpoint found at "%s"' % filename)

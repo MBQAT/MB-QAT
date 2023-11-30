@@ -1,0 +1,27 @@
+# experiment parameter
+sample_rate: 16000
+frame_size: 320
+fft_size: 161
+frame_shift: 160
+lr: 0.0002
+max_epoch: 40
+epsilon: 0.0000001
+eval_steps: 3300
+num_train: 320000
+speech_len: 96000
+
+# server setting
+cuda_ids: '0,1,2,3'
+batch_size: 32
+num_workers: 1
+
+
+# environment parameter
+speech_file: './datasets/long_wav_same_as_wang.bin'
+noise_file: './datasets/long_wav.bin'
+eval_file: './datasets/WSJ0_test_samps/test_ADTbabble_snr-5_unseen.samp'
+test_path: './datasets/WSJ0_test_samps/'
+output_dir: './model/torch_quantization_test/result/'
+tr_snr: [ -5, -4, -3, -2, -1, 0, 2, 5 ]
+
+test_wav: './datasets/test_wav/3s_test.wav'
